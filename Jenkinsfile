@@ -49,9 +49,10 @@ pipeline {
             steps {
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
-                    configs: 
+                    configs: {
                       - kind: Service
                       - apiVersion: v1
+                    },
                     enableConfigSubstitution: true
                 )
             }
