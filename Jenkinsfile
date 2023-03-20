@@ -49,7 +49,9 @@ pipeline {
             steps {
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube-canary.yml',
+                    configs: 
+                      -kind: Service
+                      -apiVersion: v1
                     enableConfigSubstitution: true
                 )
             }
