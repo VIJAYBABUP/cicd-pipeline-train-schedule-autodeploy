@@ -50,8 +50,8 @@ pipeline {
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
                     configs: 
-                      -kind: Service
-                      -apiVersion: v1
+                      - kind: Service
+                      - apiVersion: v1
                     enableConfigSubstitution: true
                 )
             }
