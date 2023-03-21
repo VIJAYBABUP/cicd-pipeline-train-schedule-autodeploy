@@ -22,7 +22,7 @@ pipeline {
                     app = docker.build(DOCKER_IMAGE_NAME)
                     app.inside {
                         sh 'echo Hello, World!'
-                        sh 'echo "${env.BUILD_NUMBER}"'
+                        sh 'env > env.txt'
                     }
                 }
             }
@@ -49,8 +49,8 @@ pipeline {
             }
             steps {
                 echo 'Running canary deployment'
-                echo "${env.BUILD_NUMBER}"
-                echo "${DOCKER_IMAGE_NAME:$BUILD_NUMBER}"
+                echo ${env.BUILD_NUMBER}
+                echo ${DOCKER_IMAGE_NAME:$BUILD_NUMBER}
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
                     configs: 'train-schedule-kube-canary.yml',
