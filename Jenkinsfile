@@ -22,7 +22,6 @@ pipeline {
                     app = docker.build(DOCKER_IMAGE_NAME)
                     app.inside {
                         sh 'echo Hello, World!'
-                        sh 'env > env.txt'
                     }
                 }
             }
@@ -49,13 +48,7 @@ pipeline {
             }
             steps {
                 echo 'Running canary deployment'
-                echo "${env.BUILD_NUMBER}"
-                echo "${DOCKER_IMAGE_NAME:$BUILD_NUMBER}"
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube-canary.yml',
-                    enableConfigSubstitution: true
-                )
+                sh 'kubectl apply -f /var/lib/jenkins/workspace/proj_2/train-schedule-kube-canary.yml --kubeconfig /.kube/config'
             }
         }
         stage('DeployToProduction') {
@@ -67,17 +60,8 @@ pipeline {
             }
             steps {
                 input 'Deploy to Production?'
-                milestone(1)
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube-canary.yml',
-                    enableConfigSubstitution: true
-                )
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube.yml',
-                    enableConfigSubstitution: true
-                )
+                sh 'kubectl apply -f /var/lib/jenkins/workspace/proj_2/train-schedule-kube-canary.yml --kubeconfig /.kube/config'
+                sh 'kubectl apply -f /var/lib/jenkins/workspace/proj_2/train-schedule-kube.yml --kubeconfig /.kube/config'
             }
         }
     }
