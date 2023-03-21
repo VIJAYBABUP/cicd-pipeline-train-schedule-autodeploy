@@ -48,7 +48,7 @@ pipeline {
             }
             steps {
                 echo 'Running canary deployment'
-                sh 'sudo kubectl apply -f /var/lib/jenkins/workspace/proj_2/train-schedule-kube-canary.yml --kubeconfig /.kube/config'
+                sh 'sleep 10'
             }
         }
         stage('DeployToProduction') {
@@ -60,8 +60,8 @@ pipeline {
             }
             steps {
                 input 'Deploy to Production?'
-                sh 'sudo kubectl apply -f /var/lib/jenkins/workspace/proj_2/train-schedule-kube-canary.yml --kubeconfig /.kube/config'
-                sh 'sudo kubectl apply -f /var/lib/jenkins/workspace/proj_2/train-schedule-kube.yml --kubeconfig /.kube/config'
+                sh 'sleep 15'
+                sh 'sleep 8'
             }
         }
     }
