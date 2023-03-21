@@ -14,9 +14,9 @@ pipeline {
             }
         }
         stage('Build Docker Image') {
-           // when {
-                //branch 'master'
-            //}
+            when {
+                branch 'master'
+            }
             steps {
                 script {
                     app = docker.build(DOCKER_IMAGE_NAME)
@@ -27,9 +27,9 @@ pipeline {
             }
         }
         stage('Push Docker Image') {
-            //when {
-                //branch 'master'
-            //}
+            when {
+                branch 'master'
+            }
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
@@ -40,28 +40,41 @@ pipeline {
             }
         }
         stage('CanaryDeploy') {
-            //when {
-                //branch 'master'
-            //}
+            when {
+                branch 'master'
+            }
             environment { 
                 CANARY_REPLICAS = 1
             }
             steps {
                 echo 'Running canary deployment'
-                sh 'sleep 10'
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'train-schedule-kube-canary.yml',
+                    enableConfigSubstitution: true
+                )
             }
         }
         stage('DeployToProduction') {
-            //when {
-                //branch 'master'
-            //}
+            when {
+                branch 'master'
+            }
             environment { 
                 CANARY_REPLICAS = 0
             }
             steps {
                 input 'Deploy to Production?'
-                sh 'sleep 15'
-                sh 'sleep 8'
+                milestone(1)
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'train-schedule-kube-canary.yml',
+                    enableConfigSubstitution: true
+                )
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'train-schedule-kube.yml',
+                    enableConfigSubstitution: true
+                )
             }
         }
     }
