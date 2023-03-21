@@ -49,8 +49,8 @@ pipeline {
             }
             steps {
                 echo 'Running canary deployment'
-                echo ${env.BUILD_NUMBER}
-                echo ${DOCKER_IMAGE_NAME:$BUILD_NUMBER}
+                echo "${env.BUILD_NUMBER}"
+                echo "${DOCKER_IMAGE_NAME:$BUILD_NUMBER}"
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
                     configs: 'train-schedule-kube-canary.yml',
