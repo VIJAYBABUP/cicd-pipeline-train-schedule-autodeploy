@@ -47,6 +47,8 @@ pipeline {
                 CANARY_REPLICAS = 1
             }
             steps {
+                echo 'Running canary deployment'
+                echo "$($DOCKER_IMAGE_NAME:$BUILD_NUMBER)"
                 kubernetesDeploy(
                     kubeconfigId: 'kubeconfig',
                     configs: 'train-schedule-kube-canary.yml',
